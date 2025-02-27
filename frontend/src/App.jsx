@@ -4,30 +4,38 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const handleSubmit = async () => {
+    const messageInput = document.getElementById('messageInput')
+    if (!messageInput) return
+    const userMessage = messageInput.value
+    messageInput.value = ''
+
+    const message = JSON.stringify({role: 'user', content: userMessage })
+    console.log("User: " + userMessage)
+    let response = null
+    try {
+      response = await fetch('http://localhost:5000/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: message,
+      })
+    } catch (error) {
+        console.error('Error:', error)
+        return
+    }
+    const data = await response.json()
+
+    console.log("Assistant: " + data.response)
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div id="prompt">
+        <input id="messageInput" contentEditable></input>
+        <button id="submit" onClick={handleSubmit}></button>    
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
