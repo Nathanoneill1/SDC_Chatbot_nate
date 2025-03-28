@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useState , useEffect } from 'react'
+import Message from './components/Message.jsx' // import the Message component
 
 function App() {
 
   // creates a persistent variable for the conversation history 
   // the first is set to a system message, this gives the AI context
   const [conversationHistory, setConversationHistory] = useState([{role: 'system', content: "You are a sarcastic Doctor."}]) 
+  const [messages, setMessages] = useState([])
 
   const updateConversationHistory = async (role, content) => { // this makes updating the conversationHistory a bit easier to type
     setConversationHistory([...conversationHistory, {role: role, content: content}])
@@ -46,8 +48,26 @@ function App() {
 
   }
 
+  useEffect(() => { // useEffect enables re-rendering upon the update of a dependency, parameters are a function (arrow function in this case) and a dependency array
+    setMessages(
+      // the filter function for lists filters out certain messages; in this case it filters out conversationHistory with the 'system' role
+      conversationHistory.filter((message) => message.role !== 'system').map((message, index) => { // then, the filtered messages are mapped with the map function to XML elements with an arrow function that takes in the conversationHistory message and index which is incremented by the map function
+        // map to a Message element with props: key, id, message, and color
+        if (message.role === 'user') {
+          return <Message key={index} id={`message${index}`} message={message.content} color={"#0791fa"}/> // blue if its a user message
+        } else {
+          return <Message key={index} id={`message${index}`} message={message.content} color={"#b6bbbf"}/> // grey if its an ai message
+        }
+      })
+    )
+  }, [conversationHistory]); // this is the dependency list (just conversationHistory in this case), whenever conversationHistory is updated, this function is run and rerenders updated part of component
+
   return (
+    // returns array of JSX elements (messages) in a div and input + button in a div
     <>
+      <div id="messages">
+        {messages}
+      </div>
       <div id="prompt">
         <input id="messageInput" contentEditable></input>
         <button id="submit" onClick={handleSubmit}></button>    
