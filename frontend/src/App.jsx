@@ -62,6 +62,8 @@ function App() {
     )
   }, [conversationHistory]); // this is the dependency list (just conversationHistory in this case), whenever conversationHistory is updated, this function is run and rerenders updated part of component
 
+
+
   return (
     // returns array of JSX elements (messages) in a div and input + button in a div
     <>
@@ -69,7 +71,7 @@ function App() {
         {messages}
       </div>
       <div id="prompt">
-        <input id="messageInput" contentEditable></input>
+        <input id="messageInput" autoComplete='off'></input>
         <button id="submit" onClick={handleSubmit}></button>    
       </div>
     </>
@@ -77,3 +79,4 @@ function App() {
 }
 
 export default App
+
