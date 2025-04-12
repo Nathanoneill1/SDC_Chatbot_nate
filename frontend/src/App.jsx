@@ -16,7 +16,7 @@ function App() {
   const handleSubmit = async () => {
     let currentHistory = conversationHistory; // this allows for a current history in the function due to useStates not immediately updating
     const messageInput = document.getElementById('messageInput') // get the property info for the "messageInput" html element
-    if (!messageInput) return // if there is no message, return
+    if (messageInput.value === '') return // if there is no message, return
     const userMessage = messageInput.value // get the value property from the "messageInput" html element
     updateConversationHistory('user', userMessage) // update the conversationHistory useState with the new user message
     currentHistory.push({role: 'user', content: userMessage}); // update the currentHistory with the new user message
@@ -62,6 +62,27 @@ function App() {
     )
   }, [conversationHistory]); // this is the dependency list (just conversationHistory in this case), whenever conversationHistory is updated, this function is run and rerenders updated part of component
 
+  useEffect(() => { // best practice is to put eventListeners in useEffects
+    const handleKeyDown = (e) => { // function to be triggered upon key press
+      if (e.key === 'Enter') { // if the button pressed is enter continue
+        if (e.shiftKey) return  // if the shift key is pressed, return
+        if (messageInput.value === '') return // if the input is blank, return 
+        e.preventDefault() // prevents the default key down event
+        handleSubmit() // runs the handleSubmit function
+      }
+    }
+
+    const messageInput = document.getElementById('messageInput') // grabs messageInput element 
+    if (messageInput) { // if messageInput isn't null
+      messageInput.addEventListener('keydown', handleKeyDown) // add keydown event listener to messageInput; whenever a key is pressed, the function is triggered
+    }
+
+    return () => {
+      if (messageInput) {
+        messageInput.removeEventListener('keydown', handleKeyDown) // removes the event listener
+      }
+    }
+  });
 
 
   return (
