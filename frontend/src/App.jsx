@@ -66,7 +66,6 @@ function App() {
     const handleKeyDown = (e) => { // function to be triggered upon key press
       if (e.key === 'Enter') { // if the button pressed is enter continue
         if (e.shiftKey) return  // if the shift key is pressed, return
-        if (messageInput.value === '') return // if the input is blank, return 
         e.preventDefault() // prevents the default key down event
         handleSubmit() // runs the handleSubmit function
       }
